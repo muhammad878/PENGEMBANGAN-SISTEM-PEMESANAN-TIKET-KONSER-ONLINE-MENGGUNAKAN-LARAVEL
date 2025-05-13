@@ -1,0 +1,208 @@
+// Concert Ticketing System Database Diagram
+// For use with https://dbdiagram.io/home
+
+Table users {
+  id integer [primary key]
+  name varchar
+  email varchar [unique]
+  password varchar
+  role enum('user', 'eo', 'admin')
+  status boolean
+  email_verified_at timestamp
+  created_at timestamp
+  updated_at timestamp
+  two_factor_columns json // Added based on migration
+  deleted_at timestamp // Soft deletes
+}
+
+Table personal_access_tokens {
+  id integer [primary key]
+  tokenable_type varchar
+  tokenable_id integer
+  name varchar
+  token varchar [unique]
+  abilities text
+  last_used_at timestamp
+  expires_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table cache {
+  key varchar [primary key]
+  value text
+  expiration integer
+}
+
+Table jobs {
+  id integer [primary key]
+  queue varchar
+  payload longtext
+  attempts tinyint
+  reserved_at timestamp
+  available_at timestamp
+  created_at timestamp
+}
+
+Table categories {
+  id integer [primary key]
+  name varchar
+  slug varchar [unique]
+  description text
+  image varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table venues {
+  id integer [primary key]
+  name varchar
+  slug varchar [unique]
+  address text
+  city varchar
+  capacity integer
+  description text
+  image varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table events {
+  id integer [primary key]
+  user_id integer [not null]
+  category_id integer
+  venue_id integer
+  title varchar
+  slug varchar [unique]
+  description text
+  image varchar
+  start_date timestamp
+  end_date timestamp
+  status enum('pending', 'approved', 'rejected')
+  featured boolean
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp // Soft deletes
+}
+
+Table tickets {
+  id integer [primary key]
+  event_id integer [not null]
+  name varchar
+  description text
+  price decimal
+  quantity integer
+  max_per_transaction integer
+  available_from timestamp
+  available_until timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table orders {
+  id integer [primary key]
+  user_id integer [not null]
+  total_amount decimal
+  status enum('pending', 'paid', 'cancelled')
+  payment_method varchar
+  transaction_id varchar
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp // Soft deletes
+}
+
+Table order_items {
+  id integer [primary key]
+  order_id integer [not null]
+  ticket_id integer [not null]
+  quantity integer
+  price decimal
+  subtotal decimal
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table payments {
+  id integer [primary key]
+  order_id integer [not null, unique]
+  amount decimal
+  status enum('pending', 'completed', 'failed')
+  payment_method varchar
+  transaction_id varchar
+  payment_proof varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table e_tickets {
+  id integer [primary key]
+  user_id integer [not null]
+  order_item_id integer [not null]
+  code varchar [unique]
+  status enum('active', 'used', 'cancelled', 'expired')
+  accessed_at timestamp
+  accessed_by varchar
+  access_notes varchar
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp // Soft deletes
+}
+
+Table transactions {
+  id integer [primary key]
+  user_id integer [not null]
+  event_id integer [not null]
+  ticket_count integer
+  total_amount decimal
+  commission_amount decimal
+  payment_method varchar
+  payment_status varchar
+  status enum('pending', 'completed', 'cancelled', 'refunded')
+  buyer_name varchar
+  buyer_email varchar
+  buyer_phone varchar
+  payment_proof varchar
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp // Soft deletes
+}
+
+Table faqs {
+  id integer [primary key]
+  question text
+  answer text
+  order integer
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table contact_messages {
+  id integer [primary key]
+  name varchar
+  email varchar
+  subject varchar
+  message text
+  status enum('unread', 'read', 'replied')
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Relationships
+Ref: events.user_id > users.id // Event organizer
+Ref: events.category_id > categories.id
+Ref: events.venue_id > venues.id
+
+Ref: tickets.event_id > events.id
+
+Ref: orders.user_id > users.id
+
+Ref: order_items.order_id > orders.id
+Ref: order_items.ticket_id > tickets.id
+
+Ref: payments.order_id - orders.id // One-to-one relationship
+
+Ref: e_tickets.order_item_id > order_items.id
+Ref: e_tickets.user_id > users.id
+
+Ref: transactions.user_id > users.id
+Ref: transactions.event_id > events.id

@@ -1,0 +1,117 @@
+# PENJELASAN TABEL-TABEL DATABASE SISTEM TIKET KONSER
+
+## Tabel Users
+Tabel ini menyimpan data pengguna aplikasi dengan peran yang berbeda (admin, event organizer, user biasa).
+- `id`: ID unik pengguna
+- `name`: Nama pengguna
+- `email`: Email pengguna (unik)
+- `password`: Password terenkripsi
+- `role`: Peran pengguna ('user', 'eo', 'admin')
+- `status`: Status aktif/nonaktif pengguna
+- `two_factor_columns`: Data untuk autentikasi dua faktor
+- `deleted_at`: Waktu penghapusan (soft delete)
+
+## Tabel Personal Access Tokens
+Tabel untuk menyimpan token akses API.
+- `id`: ID unik token
+- `tokenable_type`, `tokenable_id`: Relasi polimorfik ke model yang memiliki token
+- `name`, `token`: Identifikasi token
+- `abilities`: Kemampuan akses yang diberikan token
+- `expires_at`: Waktu kedaluwarsa token
+
+## Tabel Cache
+Tabel untuk sistem cache Laravel.
+- `key`: Kunci cache
+- `value`: Nilai cache
+- `expiration`: Waktu kedaluwarsa cache
+
+## Tabel Jobs
+Tabel untuk sistem antrian (queue) Laravel.
+- `queue`: Nama antrian
+- `payload`: Data tugas yang akan dijalankan
+- `attempts`: Jumlah percobaan menjalankan tugas
+
+## Tabel Categories
+Tabel kategori untuk event/konser.
+- `name`: Nama kategori
+- `slug`: Slug URL-friendly
+- `description`: Deskripsi kategori
+- `image`: Path ke gambar kategori
+
+## Tabel Events
+Tabel utama untuk menyimpan data event/konser.
+- `user_id`: ID penyelenggara event
+- `category_id`: ID kategori event
+- `title`: Judul event
+- `description`: Deskripsi event
+- `date`: Tanggal dan waktu event
+- `location`: Lokasi event
+- `maps_link`: Link Google Maps untuk lokasi
+- `poster_path`: Path ke poster event
+- `venue_image_path`: Path ke gambar venue/lokasi
+- `status`: Status event ('pending', 'active', 'rejected', 'completed')
+- `ticket_price`: Harga tiket
+- `ticket_quantity`: Jumlah tiket tersedia
+- `external_links`: Link eksternal (YouTube, Spotify, dll)
+- `rejection_reason`: Alasan penolakan jika status 'rejected'
+
+## Tabel Tickets
+Tabel untuk tiket-tiket yang tersedia untuk event.
+- `event_id`: ID event
+- `name`: Nama tiket (misal: VIP, Reguler, dll)
+- `price`: Harga tiket
+- `quantity`: Jumlah tiket
+
+## Tabel Orders
+Tabel untuk pesanan/order tiket.
+- `user_id`: ID pengguna yang memesan
+- `total_amount`: Total pembayaran
+- `status`: Status pesanan ('pending', 'paid', 'cancelled')
+- `payment_method`: Metode pembayaran
+
+## Tabel Order Items
+Tabel detail tiket dalam pesanan.
+- `order_id`: ID pesanan
+- `ticket_id`: ID tiket
+- `quantity`: Jumlah tiket yang dipesan
+- `price`: Harga tiket saat dibeli
+- `subtotal`: Total harga (price × quantity)
+
+## Tabel Payments
+Tabel untuk informasi pembayaran.
+- `order_id`: ID pesanan
+- `amount`: Jumlah pembayaran
+- `status`: Status pembayaran ('pending', 'completed', 'failed')
+- `payment_proof`: Bukti pembayaran
+
+## Tabel E-Tickets
+Tabel untuk tiket elektronik.
+- `user_id`: ID pengguna pemilik tiket
+- `order_item_id`: ID order item terkait
+- `code`: Kode unik tiket
+- `status`: Status tiket ('active', 'used', 'cancelled', 'expired')
+- `accessed_at`: Waktu tiket diakses/digunakan
+- `accessed_by`: Siapa yang mengakses/memvalidasi tiket
+
+## Tabel Transactions
+Tabel untuk mencatat transaksi finansial.
+- `user_id`: ID pengguna
+- `event_id`: ID event
+- `ticket_count`: Jumlah tiket
+- `total_amount`: Total pembayaran
+- `commission_amount`: Jumlah komisi
+- `buyer_name`, `buyer_email`, `buyer_phone`: Data pembeli
+
+## Tabel FAQs
+Tabel untuk pertanyaan umum.
+- `question`: Pertanyaan
+- `answer`: Jawaban
+- `order`: Urutan tampilan
+
+## Tabel Contact Messages
+Tabel untuk menyimpan pesan kontak dari pengguna.
+- `name`: Nama pengirim
+- `email`: Email pengirim
+- `subject`: Subjek pesan
+- `message`: Isi pesan
+- `status`: Status pesan ('unread', 'read', 'replied')
