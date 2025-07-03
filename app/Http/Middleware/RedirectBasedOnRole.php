@@ -20,6 +20,17 @@ class RedirectBasedOnRole
         $path = $request->path();
         Log::info("RedirectBasedOnRole: Current path: '{$path}'");
         
+        // Jangan redirect untuk halaman publik, login, register, logout, dsb
+        if (
+            $request->is('/') ||
+            $request->is('login') ||
+            $request->is('register') ||
+            $request->is('logout') ||
+            $request->is('password/*')
+        ) {
+            return $next($request);
+        }
+        
         // Proses request normally jika sudah di path yang sesuai
         if ($request->is('admin/*') || $request->is('organizer/*') || $request->is('dashboard')) {
             Log::info("RedirectBasedOnRole: Already in correct path, proceeding normally");

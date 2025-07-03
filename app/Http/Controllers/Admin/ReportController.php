@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Event;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\TransactionsExport;
 
 class ReportController extends Controller
 {
@@ -69,7 +71,6 @@ class ReportController extends Controller
 
     public function export()
     {
-        // TODO: Implementasi export ke Excel
-        return back()->with('error', 'Fitur export belum tersedia');
+        return Excel::download(new TransactionsExport, 'laporan-transaksi.xlsx');
     }
 } 

@@ -51,11 +51,7 @@
                                     <span class="mr-2">📝</span> Laporan Transaksi
                                 </a>
                             </li>
-                            <li class="pt-4 mt-4 border-t border-gray-700">
-                                <a href="{{ route('dashboard') }}" class="block p-2 rounded hover:bg-gray-700">
-                                    <span class="mr-2">🏠</span> Kembali ke Website
-                                </a>
-                            </li>
+                           
                         </ul>
                     </nav>
                 </div>

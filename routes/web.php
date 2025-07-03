@@ -67,7 +67,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 });
 
 // Admin Routes
-Route::middleware(['auth:sanctum', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     
@@ -90,7 +90,7 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('admin')->name('admin.')
 });
 
 // Event Organizer Routes
-Route::middleware(['auth:sanctum', 'verified'])->prefix('organizer')->name('organizer.')->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'role:eo'])->prefix('organizer')->name('organizer.')->group(function () {
     // Dashboard
     Route::get('/dashboard', [OrganizerController::class, 'dashboard'])->name('dashboard');
     
@@ -121,6 +121,7 @@ Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
+    'role:user'
 ])->group(function () {
     Route::get('/dashboard', function () {
         $user = Auth::user();
